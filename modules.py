@@ -18,7 +18,7 @@ def onError(errorCode, extra):
     if errorCode in (1, 2): # print error information, print usage and exit
         print(extra)
         usage(errorCode)
-    elif errorCode == 3: # print error information and exit
+    elif errorCode in (3, 5, 6, 7): # print error information and exit
         print(extra)
         sys.exit(errorCode)
     elif errorCode == 4: # print error information and return running program
@@ -81,6 +81,7 @@ def setAmps(rdserialCmd, group, ampere, verbose):
     if verbose:
         print("\n--- Setting current to " + str(ampere) + "A for group " + str(group))
     return " --set-group-amps " + str(ampere)
+
     
     
     
