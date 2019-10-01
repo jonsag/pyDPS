@@ -8,7 +8,9 @@ config = configparser.ConfigParser()  # define config file
 config.read("%s/config.ini" % os.path.dirname(os.path.realpath(__file__)))  # read config file
 
 # read variables from config file
-var = config.get('header', 'var').strip()
+devicePath = config.get('device', 'devicePath').strip()
+
+rdserialCmd = "rdserialtool --serial-device " + devicePath + " dps"
 
 # handle errors
 def onError(errorCode, extra):
@@ -59,8 +61,26 @@ def runSubprocess(cmd, verbose):
     returnCode = response.returncode
     if returnCode != 0:
         print("\nProcess exited uncleanly\nwith exit code " + str(response.returncode))
+        
+def deviceOn(rdserialCmd, verbose):
+    if verbose:
+        print("\n--- Turning device ON ...")
+    return " --set-output-state on"
     
-
+def deviceOff(rdserialCmd, verbose):
+    if verbose:
+        print("\n--- Turning device OFF ...")
+    return " --set-output-state off"
+    
+def setVolt(rdserialCmd, group, volt, verbose):
+    if verbose:
+        print("\n--- Setting volt to " + str(volt) + "V for group " + str(group))
+    return " --set-group-volts " + str(volt)
+    
+def setAmps(rdserialCmd, group, ampere, verbose):
+    if verbose:
+        print("\n--- Setting current to " + str(ampere) + "A for group " + str(group))
+    return " --set-group-amps " + str(ampere)
     
     
     
