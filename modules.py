@@ -14,11 +14,11 @@ rdserialCmd = "rdserialtool --serial-device " + devicePath + " dps"
 
 # handle errors
 def onError(errorCode, extra):
-    print("\nError:")
+    print("\nError " + str(errorCode) + ":")
     if errorCode in (1, 2): # print error information, print usage and exit
         print(extra)
         usage(errorCode)
-    elif errorCode in (3, 5, 6, 7): # print error information and exit
+    elif errorCode in (3, 5, 6, 7, 8, 9): # print error information and exit
         print(extra)
         sys.exit(errorCode)
     elif errorCode == 4: # print error information and return running program
@@ -59,31 +59,67 @@ def runSubprocess(cmd, verbose):
     #print("----------\n" + cmdList[0] + " session ended")
     
     returnCode = response.returncode
+
     if returnCode != 0:
         print("\nProcess exited uncleanly\nwith exit code " + str(response.returncode))
+
+def runSubprocessCapture(cmd, verbose):
+    if verbose:
+        print("\n--- Running subprocess")
+        print("    Constructing command from \n    " + cmd + " ...")
         
-def deviceOn(rdserialCmd, verbose):
+    cmdList = cmd.split()
+    
+    if verbose:
+        print("    Command list: \n        " + str(cmdList))
+                
+    #process = subprocess.run(cmdList, check=True, stdout=subprocess.PIPE, universal_newlines=True)
+    #output = process.stdout
+    
+    process = subprocess.Popen(cmdList, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    stdout, stderr = process.communicate()
+    
+    #returnCode = response.returncode
+
+    #if returnCode != 0:
+    #    print("\nProcess exited uncleanly\nwith exit code " + str(response.returncode))
+        
+    return stdout
+    
+def deviceOn(verbose):
     if verbose:
         print("\n--- Turning device ON ...")
     return " --set-output-state on"
     
-def deviceOff(rdserialCmd, verbose):
+def deviceOff(verbose):
     if verbose:
         print("\n--- Turning device OFF ...")
     return " --set-output-state off"
     
-def setVolt(rdserialCmd, group, volt, verbose):
+def setVolt(group, volt, verbose):
     if verbose:
         print("\n--- Setting volt to " + str(volt) + "V for group " + str(group))
     return " --set-group-volts " + str(volt)
     
-def setAmps(rdserialCmd, group, ampere, verbose):
+def setAmps(group, ampere, verbose):
     if verbose:
         print("\n--- Setting current to " + str(ampere) + "A for group " + str(group))
     return " --set-group-amps " + str(ampere)
 
+def useGroup(group, verbose):
+    if verbose:
+        print("\n--- Loading group no " + str(group))
+    return " --load-group " + str(group)
+
+def groupSettings(verbose):
+    if verbose:
+        print("\n--- Getting group settings ...")
+        
+    cmd = rdserialCmd + " --all-groups"
     
-    
+    output = runSubprocessCapture(cmd, verbose)
+        
+    return output
     
     
     
