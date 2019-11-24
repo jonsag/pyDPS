@@ -29,7 +29,21 @@ def onError(errorCode, extra):
 def usage(exitCode):
     print("\nUsage:")
     print("----------------------------------------")
-    print("%s " % sys.argv[0])
+    
+    print("%s -1/-0" % sys.argv[0])
+    print("    Turn device on/off")
+    
+    print("\n%s -V [volts] (-g [group])" % sys.argv[0])
+    print("    Set output voltage to [volts] (for group no [group])")
+    
+    print("\n%s -A [amperes] (-g [group])" % sys.argv[0])
+    print("    Set max current to [amperes] (for group no [group])")
+    
+    print("\n%s -l -g [group]" % sys.argv[0])
+    print("    Load group no [group]")
+    
+    print("\n%s -s" % sys.argv[0])
+    print("    Show device status")
     
     print("\n%s -v" % sys.argv[0])
     print("    Verbose output")
@@ -37,11 +51,11 @@ def usage(exitCode):
     print("\n%s -h" % sys.argv[0])
     print("    Show help")
     
-    print("\nrdserialtool dps --help")
-    print("----------------------------------------")
-    runSubprocess("which rdserialtool", False)
-    print()
-    runSubprocess("rdserialtool dps --help", False)
+    #print("\nrdserialtool dps --help")
+    #print("----------------------------------------")
+    #runSubprocess("which rdserialtool", False)
+    #print()
+    #runSubprocess("rdserialtool dps --help", False)
     sys.exit(exitCode)
     
 def runSubprocess(cmd, verbose):
@@ -72,17 +86,9 @@ def runSubprocessCapture(cmd, verbose):
     
     if verbose:
         print("    Command list: \n        " + str(cmdList))
-                
-    #process = subprocess.run(cmdList, check=True, stdout=subprocess.PIPE, universal_newlines=True)
-    #output = process.stdout
     
     process = subprocess.Popen(cmdList, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     stdout, stderr = process.communicate()
-    
-    #returnCode = response.returncode
-
-    #if returnCode != 0:
-    #    print("\nProcess exited uncleanly\nwith exit code " + str(response.returncode))
         
     return stdout
     
